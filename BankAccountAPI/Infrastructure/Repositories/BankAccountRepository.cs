@@ -1,42 +1,44 @@
 using BankAccountAPI.Application.Interfaces;
 using BankAccountAPI.Domain.Entities;
 
+
 namespace BankAccountAPI.Infrastructure.Repositories
 {
     public class BankAccountRepository : IBankAccountRepository
     {
-        private readonly List<BankAccount> _accounts = new();
-    }
+        private readonly List<BankAccount> _bankAccounts = new(); // Sample in-memory data store
 
-    public async Task<BankAccount?> GetByIdAsync(Guid id)
-    {
-        return await Task.FromResult(_accounts.FirstOrDefault(a => a.Id == id));
-    }
-
-    public async Task AddAsync(BankAccount account)
-    {
-        _accounts.Add(account);
-        await Task.CompletedTask;
-    }
-
-    public async Task UpdateAsync(BankAccount account)
-    {
-        var existingAccount = await GetByIdAsync(account.Id);
-        if (existingAccount != null)
+        public async Task<IEnumerable<BankAccount>> GetAllAsync()
         {
-            existingAccount.OwnerName = account.OwnerName;
-            existingAccount.Balance = account.Balance;
+            return await Task.FromResult(_bankAccounts);
         }
-        await Task.CompletedTask;
-    }
 
-    public async Task DeleteAsync(Guid id)
-    {
-        var account = await GetByIdAsync(id);
-        if (account != null)
+        public async Task<BankAccount?> GetByIdAsync(Guid id)
         {
-            _accounts.Remove(account);
+            return await Task.FromResult(_bankAccounts.Find(b => b.Id == id));
         }
-        await Task.CompletedTask;
+
+        public async Task AddAsync(BankAccount bankAccount)
+        {
+            _bankAccounts.Add(bankAccount);
+            await Task.CompletedTask;
+        }
+
+        public async Task UpdateAsync(BankAccount bankAccount)
+        {
+            var existingAccount = _bankAccounts.Find(b => b.Id == bankAccount.Id);
+            if (existingAccount is not null)
+            {
+                existingAccount.Balance = bankAccount.Balance;
+                existingAccount.OwnerName = bankAccount.OwnerName;
+            }
+            await Task.CompletedTask;
+        }
+
+        public async Task DeleteAsync(Guid id)
+        {
+            _bankAccounts.RemoveAll(b => b.Id == id);
+            await Task.CompletedTask;
+        }
     }
 }
