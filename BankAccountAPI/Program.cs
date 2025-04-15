@@ -1,9 +1,5 @@
 using BankAccountAPI.Application.Interfaces;
 using BankAccountAPI.Infrastructure.Repositories;
-using MediatR;
-using System.Reflection;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Builder;
 
 var builder = WebApplication.CreateBuilder(args);
 
